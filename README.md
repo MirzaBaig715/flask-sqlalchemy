@@ -3,7 +3,7 @@
 ### Basics
 
 1. Fork/Clone
-2. Activate a virtualenv (if you don't want to mess up packages:))
+2. Activate a virtualenv if you don't want to mess up packages:)
 3. Install the requirements
 
 ### Create DB
