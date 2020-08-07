@@ -37,3 +37,6 @@ Go to the project directory:
 $ pylint --load-plugins pylint_flask_sqlalchemy src
 
 ```
+### API Docs
+Go to docs: https://documenter.getpostman.com/view/4305746/T1LHHpw2?version=latest
+
