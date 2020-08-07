@@ -1,3 +1,5 @@
+"""Common util methods for all the applications"""
+
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import abort
@@ -6,6 +8,7 @@ from ..constants import Constant
 
 
 class UtilsMethods:
+    """Generic methods for common tasks"""
 
     @staticmethod
     def get_object_or_raise_404(model, params, filter_by=False, name="Object"):
@@ -36,5 +39,3 @@ class UtilsMethods:
             return schema.load(data)
         except ValidationError as err:
             abort(400, description=err.messages)
-
-

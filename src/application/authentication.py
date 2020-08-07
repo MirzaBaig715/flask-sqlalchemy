@@ -1,3 +1,5 @@
+"""This module is for the authentication system in our application"""
+
 import os
 import datetime
 import jwt
@@ -5,6 +7,7 @@ from werkzeug.exceptions import abort
 
 
 class JwtAuth:
+    """Helper methods for token authentication for JWT"""
 
     @staticmethod
     def encode_auth_token(user):
@@ -19,8 +22,8 @@ class JwtAuth:
                 'sub': user
             }
             return jwt.encode(payload, os.getenv('SECRET_KEY', 'secret'), algorithm='HS256')
-        except Exception as e:
-            return e
+        except jwt.MissingRequiredClaimError:
+            abort(400)
 
     @staticmethod
     def decode_auth_token(auth_token):
@@ -36,4 +39,3 @@ class JwtAuth:
             abort(403, 'Signature expired. Please log in again.')
         except jwt.InvalidTokenError:
             abort(403, 'Invalid token. Please log in again.')
-

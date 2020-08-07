@@ -1,22 +1,18 @@
+"""Custom response for all the data that provides common interface for all """
 from http import HTTPStatus as Status
 
 
-class ErrorResponse(object):
-    def __init__(self, code=None, message=None):
-        self.code = code
-        self.message = message
-
-    def to_dict(self):
-        return self.__dict__
-
-
 class CustomResponse:
+    """Common response structure for all"""
+
     def __init__(self, code=Status.OK, message="", data=None):
+        """Initial the class"""
         self.data = data
         self.code = code
         self.message = message
 
-    def _get_data(self):
+    def get_data(self):
+        """Get the data in dict type"""
         data = dict(
             code=self.code,
             message=self.message
@@ -26,7 +22,5 @@ class CustomResponse:
         return data
 
     def response(self):
-        return self._get_data(), Status.OK
-
-    def error(self):
-        return ErrorResponse(message=self.message, code=Status.OK)
+        """Return response with the status code"""
+        return self.get_data(), Status.OK

@@ -1,10 +1,12 @@
+"""This is where the user blueprints and controllers are"""
+
+from functools import wraps
 from flask import request, Blueprint, jsonify
 from werkzeug.exceptions import abort
+from utils.api.response import CustomResponse
 from utils.constants import Constant
 from ..services import UserService
 from ..authentication import JwtAuth
-from utils.api import CustomResponse
-from functools import wraps
 
 
 api = Blueprint('resource', __name__)
@@ -20,8 +22,6 @@ def jwt_permission(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         auth_token = request.headers.environ.get('HTTP_AUTHORIZATION', '').split(' ')
-        if not auth_token:
-            abort(403, "Invalid token provided")
         if len(auth_token) < 2:
             abort(403, "Authentication fails")
 
@@ -55,8 +55,8 @@ def update_user(pk):
     data = request.json
     UserService(user=pk, data=data).update_user()
     return CustomResponse(
-            message=Constant.response.OPERATION_SUCCESS.format(object='User', operation='updated')
-        ).response()
+        message=Constant.response.OPERATION_SUCCESS.format(object='User', operation='updated')
+    ).response()
 
 
 @api.route('/user/<int:pk>', methods=['DELETE'])
@@ -107,11 +107,11 @@ def login():
         return CustomResponse(
             message=Constant.response.NO_INPUT_DATA
         ).response()
-    user_service = UserService(data=json_data)
-    user_data = user_service.load_user_data()
+    user_service = UserService(data=json_data, attr=json_data.get('email'))
     check_password = user_service.pass_verification()
 
     if check_password:
+        user_data = user_service.get_user_by_attr()
         auth_token = JwtAuth.encode_auth_token(user_data.get('id'))
         if auth_token:
             user_data.update({'token': auth_token.decode()})
@@ -120,20 +120,24 @@ def login():
 
 
 @api.errorhandler(400)
-def resource_bad_request(e):
-    return jsonify(error=str(e))
+def resource_bad_request(error_msg):
+    """Handle the bad error"""
+    return jsonify(error=str(error_msg))
 
 
 @api.errorhandler(403)
-def resource_forbidden_request(e):
-    return jsonify(error=str(e))
+def resource_forbidden_request(error_msg):
+    """Handle the forbidden error"""
+    return jsonify(error=str(error_msg))
 
 
 @api.errorhandler(404)
-def resource_not_found(e):
-    return jsonify(error=str(e))
+def resource_not_found(error_msg):
+    """Handle the not found error"""
+    return jsonify(error=str(error_msg))
 
 
 @api.errorhandler(500)
-def internal_server_error(error):
-    return jsonify(error='An error occurred during a request')
+def internal_server_error(error_msg):
+    """Handle the internal server error"""
+    return jsonify(error=str(error_msg))

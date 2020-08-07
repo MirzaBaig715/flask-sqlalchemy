@@ -1,3 +1,5 @@
+"""This is the module where the app will run and we create the app instance"""
+
 import os
 from dotenv import load_dotenv, find_dotenv
 

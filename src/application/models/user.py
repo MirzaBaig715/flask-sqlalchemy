@@ -1,3 +1,4 @@
+"""This is database model class"""
 from marshmallow import fields, validate, pre_load
 from sqlalchemy.sql import func
 from .database import ma, db, bcrypt
@@ -19,19 +20,31 @@ class User(db.Model):
         self.created_at = created_at
 
     def save(self):
+        """Save to database"""
         db.session.add(self)
         db.session.commit()
 
     @staticmethod
     def verify_password(user, password):
+        """
+        Verify the password
+        :return boolean
+        """
         return bcrypt.check_password_hash(user.password, password)
 
     @staticmethod
     def generate_password(password):
+        """
+        Generate the hash password
+        :return boolean
+        """
         return bcrypt.generate_password_hash(password, 10).decode("utf-8", "ignore")
 
 
 class UserSchema(ma.Schema):
+    """
+    This is the user schema here
+    """
     id = fields.Integer(dump_only=True)
     username = fields.String(required=False)
     email = fields.String(required=True, validate=validate.Email())
@@ -50,4 +63,6 @@ class UserSchema(ma.Schema):
         return data
 
     class Meta:
+        """This is the meta class for the schema"""
+
         fields = ('id', 'email', 'password', 'username', 'created_at')
